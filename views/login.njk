@@ -1,0 +1,22 @@
+{% extends "base.njk" %}
+
+{% block content %}
+    <div class="flex flex-col h-screen w-full p-24 items-center bg-gray-200">
+        <div class="max-w-lg w-full bg-white rounded-3xl p-12 flex flex-col gap-8">
+            <h1 class="text-3xl text-center">links, the dynamic URL shortener</h1>
+            <p>
+                This service hosts a URL shortener. It allows users to change
+                the target URL after the shortened URL has been generated, and
+                it provides some statistics about how many times the shortened
+                URLs have been clicked.
+            </p>
+            <a href="{{ login_url }}" class="mx-auto bg-black text-white rounded p-2 flex gap-2 items-center">
+                <i class="fab fa-github text-xl"></i>
+                Log in with GitHub
+            </a>
+            <p>
+                As always, made with <i class="fas fa-code"></i> and <i class="fas fa-heart"></i> by <a class="text-blue-600" href="breq@breq.dev">breq</a>.
+            </p>
+        </div>
+    </div>
+{% endblock %}

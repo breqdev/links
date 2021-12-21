@@ -1,0 +1,86 @@
+{% extends "./base.njk" %}
+
+{% block content %}
+    <div class="flex flex-col h-screen w-full p-24 items-center bg-gray-200">
+        <div class="max-w-3xl w-full bg-white rounded-3xl p-12 flex flex-col gap-8">
+            <h1 class="text-3xl text-center">links, the dynamic URL shortener</h1>
+            <h2 class="text-2xl text-center">
+                welcome,
+                <span class="font-bold">{{ name }}</span>
+            </h2>
+            <hr class="w-full border-gray-400"/>
+            <h2 class="text-2xl text-center">my links</h2>
+            <div class="flex flex-col w-full max-w-md mx-auto gap-4">
+                {% for link in links %}
+                    <div class="border-gray-400 border-2 rounded-lg p-4 w-full flex items-center gap-4">
+                        <i class="fas fa-link text-xl text-gray-400"></i>
+                        <div class="flex-grow flex flex-col">
+                            <a href="{{ baseURL + '+' + link.code }}" target="_blank" rel="noopener" class="text-gray-400 italic">{{ baseURL }}+<span class="text-black not-italic text-xl">{{ link.code }}</span></a>
+                            <a href="{{ link.url }}" target="_blank" rel="noopener" class="text-gray-600">
+                                <i class="fas fa-arrow-right text-gray-400"></i>
+                                {{ link.url }}
+                            </a>
+                            <span class="text-center text-gray-600">({{ link.hits }}
+                                {% if link.hits == 1 %}click{% else %}clicks{% endif %})</span>
+                        </div>
+                        <div class="flex-grow"></div>
+                        <button id="editLinkButton{{ link.code }}">
+                            <i class="fas fa-pencil-alt text-xl text-gray-400 hover:text-gray-600 transition-colors"></i>
+                        </button>
+                        <form onsubmit="return confirm('Deleting a shortcode is irreversible. Would you really like to proceed?');" action="/delete" method="POST" class="relative group">
+                            <input type="hidden" value="{{ link.code }}" name="code"/>
+                            <input type="submit" value="" class="absolute inset-0 w-full z-10 block cursor-pointer"/>
+                            <i class="fas fa-trash-alt text-xl text-gray-400 group-hover:text-gray-600 transition-colors"></i>
+                        </form>
+                    </div>
+                    <form id="editLinkForm{{ link.code }}" action="/edit" method="POST" class="hidden border-x-2 border-b-2 border-gray-400 rounded-b-lg px-4 pt-6 pb-4 -mt-6 flex-col gap-2">
+                        <input type="hidden" value="{{ link.code }}" name="code"/>
+                        <label for="newTargetUrl{{ link.code }}" class="ml-2">new target url:</label>
+                        <input type="url" name="url" placeholder="https://example.com/" id="newTargetUrl{{ link.code }}" class="border border-gray-400 px-4 py-2 rounded-full"/>
+                        <input type="submit" value="save" class="border border-gray-400 hover:bg-gray-200 transition-colors px-4 py-2 rounded-full self-center"/>
+                    </form>
+                    <script>
+                        document
+                            .getElementById('editLinkButton{{ link.code }}')
+                            .addEventListener('click', () => {
+                                document
+                                    .getElementById('editLinkForm{{ link.code }}')
+                                    .classList
+                                    .toggle('hidden');
+                                document
+                                    .getElementById('editLinkForm{{ link.code }}')
+                                    .classList
+                                    .toggle('flex');
+                            });
+                    </script>
+                {% endfor %}
+                <button id="createLinkButton" class="border-gray-400 border-2 hover:bg-gray-200 transition-colors rounded-lg p-4 w-full">
+                    <i class="fas fa-plus mr-2"></i>
+                    create a new link
+                </button>
+                <form id="createLinkForm" action="/create" method="post" class="hidden border-x-2 border-b-2 border-gray-400 rounded-b-lg px-4 pt-6 pb-4 -mt-6 flex-col gap-2">
+                    <label for="targetUrl" class="ml-2">target url:</label>
+                    <input type="url" name="url" placeholder="https://example.com/" id="targetUrl" class="border border-gray-400 px-4 py-2 rounded-full"/>
+                    <input type="submit" value="create" class="border border-gray-400 hover:bg-gray-200 transition-colors px-4 py-2 rounded-full self-center"/>
+                </form>
+            </div>
+            <hr class="w-full border-gray-400"/>
+            <a href="/logout" class="bg-gray-200 hover:bg-gray-300 transition-colors text-gray-600 rounded-full px-4 py-2 self-center">
+                logout
+            </a>
+        </div>
+    </div>
+    <script>
+        const createLink = document.getElementById('createLinkButton');
+        createLink.addEventListener('click', () => {
+            document
+                .getElementById('createLinkForm')
+                .classList
+                .toggle('hidden');
+            document
+                .getElementById('createLinkForm')
+                .classList
+                .toggle('flex');
+        });
+    </script>
+{% endblock %}
